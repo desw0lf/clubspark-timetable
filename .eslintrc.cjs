@@ -14,6 +14,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    "quotes": ["warn", "double", { "avoidEscape": true }]
+    "quotes": ["warn", "double", { "avoidEscape": true }],
+    "@typescript-eslint/no-explicit-any": ["warn"],
+    "@typescript-eslint/no-unused-vars": ["warn", { "ignoreRestSiblings": true, "argsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^ignore" }]
   },
 }

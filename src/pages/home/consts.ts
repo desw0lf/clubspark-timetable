@@ -1,0 +1,1 @@
+export const DEFAULT_CLUBSPARK_ID_LIST = import.meta.env.VITE_DEFAULT_CLUBSPARK_ID_LIST.split(",");
