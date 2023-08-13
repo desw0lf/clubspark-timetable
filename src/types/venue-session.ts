@@ -1,5 +1,9 @@
 import { HexColour, IntTime } from "./global";
 
+export interface ExtendedSession extends Session {
+  extended: any;
+}
+
 interface Session {
   ID: string;
   Category: number;
@@ -25,7 +29,7 @@ interface Day {
   Sessions: Session[];
 }
 
-interface Resource {
+export interface Resource {
   ID: string;
   Name: string;
   Number: number;

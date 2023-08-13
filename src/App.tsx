@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ThemeProvider } from "./components/theme-provider";
 import { Home } from "./pages/home";
 
 const queryClient = new QueryClient({
@@ -11,9 +12,11 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Home />
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="system" storageKey="cst-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <Home />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

@@ -6,7 +6,7 @@ import { reducer, initialState } from "./reducer";
 export function TimeTable() {
   const [{ searchParams: { startDate, endDate }, idList }, dispatch] = useReducer(reducer, initialState);
   const sessions = useQueries(
-    idList.map((id) => ({
+    idList.map(({ id }) => ({
       queryKey: ["sessions", id, startDate, endDate],
       queryFn: async () => homeService.getVenueSessions({ id, startDate, endDate })
     })),
@@ -20,7 +20,7 @@ export function TimeTable() {
       dispatch({ type: "GENERATE_DATA", sessions });
     }
   }, [dispatch, sessions, isAnyLoading]);
-  
+
   if (isAnyError) {
     return <>Errored</>;
   }

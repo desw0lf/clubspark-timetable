@@ -1,18 +1,16 @@
-import { DEFAULT_CLUBSPARK_ID_LIST } from "./consts";
+import { DEFAULT_CLUBSPARK_ID_LIST } from "../consts";
+import { nowDateString } from "./now-date-string";
+import { generateData } from "./generate-data";
 // ? TYPES:
-import { DateString } from "../../types/global";
+import { ClubSparkId } from "../consts";
+import { DateString } from "../../../types/global";
 
 export interface State {
   searchParams: {
     startDate: DateString;
     endDate: DateString;
   }
-  idList: string[];
-}
-
-const nowDateString = () => {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
+  idList: ClubSparkId[];
 }
 
 export const initialState: State = {
@@ -26,7 +24,11 @@ export const initialState: State = {
 export function reducer(state: State, action: any): State {
   switch (action.type) {
     case "GENERATE_DATA": {
-      console.log({action});
+      const data = generateData(state.idList.reduce((acc, item, i) => ({
+        ...acc,
+        [item.id]: action.sessions[i].data.Resources
+      }), {}));
+      console.log({ data });
       return state;
     }
     default: {

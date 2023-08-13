@@ -12,4 +12,11 @@ const getVenueSessions = async ({ id, startDate, endDate }: { id: string; startD
   return await api.query(search).get(`/v0/VenueBooking/${id}/GetVenueSessions`) as VenueSession;
 }
 
-export default { getVenueSessions };
+const getSettings = async ({ id }: { id: string; }) => {
+  const search = {
+    _: Date.now()
+  };
+  return await api.query(search).get(`/v0/VenueBooking/${id}/GetSettings`) as any;
+}
+
+export default { getVenueSessions, getSettings };
