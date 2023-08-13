@@ -26,14 +26,16 @@ export const initialState: State = {
   onlyAvailables: true
 };
 
-export function reducer(state: State, _action: unknown): State {
-  return state;
-  // switch (action.type) {
-  //   case "GENERATE_DATA": {
-  //     return state;
-  //   }
-  //   default: {
-  //     return state;
-  //   }
-  // }
+export function reducer(state: State, action: { type: string; [key: string]: unknown }): State {
+  switch (action.type) {
+    case "TOGGLE_ONLY_AVAILABLES": {
+      return {
+        ...state,
+        onlyAvailables: !state.onlyAvailables
+      }
+    }
+    default: {
+      return state;
+    }
+  }
 }

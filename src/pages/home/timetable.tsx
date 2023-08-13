@@ -1,15 +1,16 @@
 import { useReducer, useMemo } from "react";
+import { TimetableHeader } from "./timetable-header";
 import { useQueries } from "react-query"
-import { clsx as classNames } from "clsx";
+import { cn as classNames } from "@/lib/utils";
 import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
 import { ClockIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
 
-const MAX_COLSPAN = 7;
+const MAX_COLSPAN = 7; // remember to add to tailwind.config.js > safelist (if changed)
 
 export function TimeTable() {
-  const [{ searchParams: { startDate, endDate }, idList, onlyAvailables }] = useReducer(reducer, initialState);
+  const [{ searchParams: { startDate, endDate }, idList, onlyAvailables }, dispatch] = useReducer(reducer, initialState);
   const sessions = useQueries(
     idList.map(({ id }) => ({
       queryKey: ["sessions", id, startDate, endDate],
@@ -30,18 +31,23 @@ export function TimeTable() {
     return [];
   }, [idList, sessions]);
   const getUrl = (id: string, date: string) => `${import.meta.env.VITE_BASE_EXTERNAL_URL}/${id}/Booking/BookByDate#?date=${date}&role=guest`;
+  const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
   console.log({list});
   if (isAnyError) {
     return <>Errored</>;
   }
   if (isAnyLoading) {
-    return <>Loading...</>
+    return <>
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} />
+      <span>Loading...</span>
+    </>;
   }
   const colspan = MAX_COLSPAN - idList.length;
   return (
     <>
-      <div className={`grid gap-2 grid-cols-${MAX_COLSPAN} sticky top-14 bg-background/95 py-4`}>
-        <div className={`col-span-${colspan}`}></div>
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} />
+      <div className={classNames("grid gap-2 sticky top-14 bg-background/95 py-4", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
+        <div className={classNames({ [`col-span-${colspan}`]: true })}></div>
         {idList.map(({ id, friendlyName }) => {
           return <div key={id} className="col-span-1">
             <a href={getUrl(id, startDate)} target="_blank" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
@@ -56,8 +62,8 @@ export function TimeTable() {
         if (onlyAvailables && !areAnyAvailable) {
           return null;
         }
-        return <div key={item.startTime} className={`grid gap-2 grid-cols-${MAX_COLSPAN}`}>
-        <div className={`border bg-card text-card-foreground shadow col-span-${colspan}`}>
+        return <div key={item.startTime} className={classNames("grid gap-2", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
+        <div className={classNames("border bg-card text-card-foreground shadow", { [`col-span-${colspan}`]: true })}>
           <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
               <ClockIcon />
