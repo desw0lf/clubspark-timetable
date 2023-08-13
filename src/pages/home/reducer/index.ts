@@ -1,9 +1,10 @@
 import { DEFAULT_CLUBSPARK_ID_LIST } from "../consts";
 import { nowDateString } from "./now-date-string";
-import { generateData } from "./generate-data";
+// import { generateData } from "./generate-data";
 // ? TYPES:
 import { ClubSparkId } from "../consts";
 import { DateString } from "../../../types/global";
+import { ExtendedSession } from "../../../types/venue-session";
 
 export interface State {
   searchParams: {
@@ -11,6 +12,8 @@ export interface State {
     endDate: DateString;
   }
   idList: ClubSparkId[];
+  data: ExtendedSession[];
+  onlyAvailables: boolean;
 }
 
 export const initialState: State = {
@@ -18,21 +21,19 @@ export const initialState: State = {
     startDate: nowDateString(),
     endDate: nowDateString(),
   },
-  idList: DEFAULT_CLUBSPARK_ID_LIST // ! TODO read from localStorage
+  idList: DEFAULT_CLUBSPARK_ID_LIST, // ! TODO read from localStorage
+  data: [],
+  onlyAvailables: true
 };
 
-export function reducer(state: State, action: any): State {
-  switch (action.type) {
-    case "GENERATE_DATA": {
-      const data = generateData(state.idList.reduce((acc, item, i) => ({
-        ...acc,
-        [item.id]: action.sessions[i].data.Resources
-      }), {}));
-      console.log({ data });
-      return state;
-    }
-    default: {
-      return state;
-    }
-  }
+export function reducer(state: State, _action: unknown): State {
+  return state;
+  // switch (action.type) {
+  //   case "GENERATE_DATA": {
+  //     return state;
+  //   }
+  //   default: {
+  //     return state;
+  //   }
+  // }
 }

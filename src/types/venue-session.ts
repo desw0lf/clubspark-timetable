@@ -1,7 +1,17 @@
 import { HexColour, IntTime } from "./global";
 
-export interface ExtendedSession extends Session {
-  extended: any;
+export interface ExtendedSession {
+  [key: string]: any; // TODO
+  availableCount: number;
+  startTime: IntTime; 
+  endTime: IntTime;
+  readableStartTime: string;
+  readableEndTime: string;
+  bases: { [clubSparkId: string] : SimpleSession[] }
+}
+
+export interface SimpleSession extends Session {
+  resourceMeta: Pick<Resource, "ID" | "Name">;
 }
 
 interface Session {
@@ -17,6 +27,7 @@ interface Session {
   MaxDoublesSlots: number;
   Capacity: number;
   Recurrence: boolean;
+  Cost?: number;
   CostFrom: number;
   CourtCost: number;
   LightingCost: number;
