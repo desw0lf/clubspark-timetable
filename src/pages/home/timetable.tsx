@@ -1,6 +1,6 @@
 import { useReducer, useMemo } from "react";
 import { useQueries } from "react-query"
-import classNames from "classnames";
+import { clsx as classNames } from "clsx";
 import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
