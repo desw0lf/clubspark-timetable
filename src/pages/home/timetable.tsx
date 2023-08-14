@@ -6,15 +6,18 @@ import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
 import { ClockIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
+import { useSearchParams } from "@/hooks/use-search-params";
+import { generateDate } from "@/utils/generate-dates";
 
 const MAX_COLSPAN = 7; // remember to add to tailwind.config.js > safelist (if changed)
 
 export function TimeTable() {
-  const [{ searchParams: { startDate, endDate }, idList, onlyAvailables }, dispatch] = useReducer(reducer, initialState);
+  const { date } = useSearchParams({ date: generateDate(new Date()) });
+  const [{ idList, onlyAvailables }, dispatch] = useReducer(reducer, initialState);
   const sessions = useQueries(
     idList.map(({ id }) => ({
-      queryKey: ["sessions", id, startDate, endDate],
-      queryFn: async () => homeService.getVenueSessions({ id, startDate, endDate }),
+      queryKey: ["sessions", id, date],
+      queryFn: async () => homeService.getVenueSessions({ id, startDate: date, endDate: date }),
     })),
   );
   const { isAnyError, isAnyLoading } = useMemo(() => ({
@@ -38,19 +41,19 @@ export function TimeTable() {
   }
   if (isAnyLoading) {
     return <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} />
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} />
       <span>Loading...</span>
     </>;
   }
   const colspan = MAX_COLSPAN - idList.length;
   return (
     <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} />
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} />
       <div className={classNames("grid gap-2 sticky top-14 bg-background/95 py-4", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
         <div className={classNames({ [`col-span-${colspan}`]: true })}></div>
         {idList.map(({ id, friendlyName }) => {
           return <div key={id} className="col-span-1">
-            <a href={getUrl(id, startDate)} target="_blank" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
+            <a href={getUrl(id, date)} target="_blank" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
               <span>{friendlyName || id}</span>
               <ExternalLinkIcon />
             </a>
@@ -60,7 +63,7 @@ export function TimeTable() {
       {list.map((item) => {
         const areAnyAvailable = item.availableCount > 0;
         if (onlyAvailables && !areAnyAvailable) {
-          return null;
+          return <hr key={item.startTime} className="opacity-25" />;
         }
         return <div key={item.startTime} className={classNames("grid gap-2", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
         <div className={classNames("border bg-card text-card-foreground shadow", { [`col-span-${colspan}`]: true })}>
@@ -77,15 +80,15 @@ export function TimeTable() {
           </div>
         </div>
         {Object.entries(item.bases).map(([_id, arr], i) => {
-          return <div key={i} className="border bg-card text-card-foreground shadow col-span-1">
+          return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow col-span-1 px-2">
             {arr.map((b, j) => {
               if (!b) {
                 return null;
               }
               const isAvailable = typeof b.Cost === "number";
-              return <div key={j} className={classNames({ "text-lime-600": isAvailable })}>
-                <div>{b.Name}</div>
-                <div>{b.resourceMeta.Name} {isAvailable && <span>- &pound;{b.Cost}</span>}</div>
+              return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
+                <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
+                <p className="text-xs text-muted-foreground">{b.Name}</p>
               </div>;
             })}
             </div>;
