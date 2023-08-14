@@ -56,7 +56,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({ date, settings }) =>
                     </button>
                   </TooltipTrigger>
                   {pointer && <TooltipContent>
-                    <p><b>{pointer.friendlyName}</b> court booking up to <b>{i + 1}</b> days in advance</p>
+                    <p><b>{pointer.friendlyName}</b> allows court bookings up to <b>{i + 1}</b> days in advance</p>
                   </TooltipContent>}
                 </Tooltip>
               </td>;
