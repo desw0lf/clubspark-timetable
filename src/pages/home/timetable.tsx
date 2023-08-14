@@ -8,16 +8,28 @@ import { generateData } from "./reducer/generate-data";
 import { ClockIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
+import { useIdList } from "@/providers/id-list-provider";
+import { Pointer } from "@/components/pointer";
+// ? TYPES:
+import { Settings } from "@/types/settings";
 
 const MAX_COLSPAN = 7; // remember to add to tailwind.config.js > safelist (if changed)
 
 export function TimeTable() {
+  const { idList } = useIdList();
   const { date } = useSearchParams({ date: generateDate(new Date()) });
-  const [{ idList, onlyAvailables }, dispatch] = useReducer(reducer, initialState);
+  const [{ onlyAvailables }, dispatch] = useReducer(reducer, initialState);
   const sessions = useQueries(
     idList.map(({ id }) => ({
       queryKey: ["sessions", id, date],
       queryFn: async () => homeService.getVenueSessions({ id, startDate: date, endDate: date }),
+    })),
+  );
+  const settings = useQueries(
+    idList.map(({ id }) => ({
+      queryKey: ["settings", id],
+      queryFn: async () => homeService.getSettings({ id }),
+      initialData: { Roles: [{ AdvancedBookingPeriod: -1 }] } as unknown as Settings
     })),
   );
   const { isAnyError, isAnyLoading } = useMemo(() => ({
@@ -41,19 +53,20 @@ export function TimeTable() {
   }
   if (isAnyLoading) {
     return <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} />
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <span>Loading...</span>
     </>;
   }
   const colspan = MAX_COLSPAN - idList.length;
   return (
     <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} />
+      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className={classNames("grid gap-2 sticky top-14 bg-background/95 py-4", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
         <div className={classNames({ [`col-span-${colspan}`]: true })}></div>
-        {idList.map(({ id, friendlyName }) => {
+        {idList.map(({ id, friendlyName }, i) => {
           return <div key={id} className="col-span-1">
             <a href={getUrl(id, date)} target="_blank" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
+              <Pointer pointer={{ friendlyName: "", index: i }} />
               <span>{friendlyName || id}</span>
               <ExternalLinkIcon />
             </a>

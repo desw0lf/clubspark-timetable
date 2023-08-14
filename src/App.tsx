@@ -1,5 +1,7 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ThemeProvider } from "./components/theme-provider";
+import { IdListProvider } from "./providers/id-list-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Home } from "./pages/home";
 
 const queryClient = new QueryClient({
@@ -13,11 +15,15 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="cst-ui-theme">
-      <QueryClientProvider client={queryClient}>
-        <Home />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <IdListProvider>
+      <ThemeProvider defaultTheme="system" storageKey="cst-ui-theme">
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider delayDuration={0}>
+            <Home />
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </IdListProvider>
   );
 }
 

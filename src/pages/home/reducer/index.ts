@@ -1,8 +1,8 @@
-import { DEFAULT_CLUBSPARK_ID_LIST } from "../consts";
+// import { DEFAULT_CLUBSPARK_ID_LIST } from "../consts";
 // import { nowDateString } from "./now-date-string";
 // import { generateData } from "./generate-data";
 // ? TYPES:
-import { ClubSparkId } from "../consts";
+// import { ClubSparkId } from "../consts";
 // import { DateString } from "../../../types/global";
 import { ExtendedSession } from "../../../types/venue-session";
 
@@ -11,7 +11,7 @@ export interface State {
   //   startDate: DateString;
   //   endDate: DateString;
   // }
-  idList: ClubSparkId[];
+  // idList: ClubSparkId[];
   data: ExtendedSession[];
   onlyAvailables: boolean;
 }
@@ -21,12 +21,12 @@ export const initialState: State = {
   //   startDate: nowDateString(),
   //   endDate: nowDateString(),
   // },
-  idList: DEFAULT_CLUBSPARK_ID_LIST, // ! TODO read from localStorage
+  // idList: DEFAULT_CLUBSPARK_ID_LIST,
   data: [],
   onlyAvailables: true
 };
 
-export function reducer(state: State, action: { type: string; [key: string]: unknown }): State {
+export function reducer(state: State, action: { type: string;[key: string]: unknown }): State {
   switch (action.type) {
     case "TOGGLE_ONLY_AVAILABLES": {
       return {
