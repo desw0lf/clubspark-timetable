@@ -32,7 +32,7 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
     startTime,
     endTime,
     readableStartTime: intTimeToStr(startTime),
-    readableEndTime: intTimeToStr(endTime), 
+    readableEndTime: intTimeToStr(endTime),
     bases: bases,
   };
 }
@@ -41,31 +41,31 @@ const generateList = (timeframe: TimeFrame) => {
   return [...Array(24).keys()].filter((t) => timeframe.EarliestStartTime <= t * 60 && timeframe.LatestEndTime >= t * 60 + 60);
 }
 
-const DEFAULT_LIST = generateList(DEFAULT_TIME_FRAME);
+// const DEFAULT_LIST = generateList(DEFAULT_TIME_FRAME);
 
-const PLACEHOLDER_RESOURCES = [
-  {
-    ID: "-1",
-    Name: "Court X",
-    Number: 0,
-    Location: 0,
-    Lighting: 1,
-    Surface: 6,
-    Size: 0,
-    Category: 0,
-    Days: [
-      {
-        Date: "2023-08-12T00:00:00", // todo
-        Sessions: []
-        // Sessions: DEFAULT_LIST.map((hour) => generateSession(hour, {}))
-      }
-    ]
-  },
-];
-     
+// const PLACEHOLDER_RESOURCES = [
+//   {
+//     ID: "-1",
+//     Name: "Court X",
+//     Number: 0,
+//     Location: 0,
+//     Lighting: 1,
+//     Surface: 6,
+//     Size: 0,
+//     Category: 0,
+//     Days: [
+//       {
+//         Date: "2023-08-12T00:00:00", // todo
+//         Sessions: []
+//         // Sessions: DEFAULT_LIST.map((hour) => generateSession(hour, {}))
+//       }
+//     ]
+//   },
+// ];
+
 
 export const generateData = (venues: { [id: string]: VenueSession }): ExtendedSession[] => {
-  const timeframe = Object.values(venues).reduce((acc, { EarliestStartTime, LatestEndTime}) => {
+  const timeframe = Object.values(venues).reduce((acc, { EarliestStartTime, LatestEndTime }) => {
     return {
       ...acc,
       EarliestStartTime: EarliestStartTime < acc.EarliestStartTime ? EarliestStartTime : acc.EarliestStartTime,

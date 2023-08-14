@@ -1,13 +1,13 @@
 import { HexColour, IntTime } from "./global";
 
 export interface ExtendedSession {
-  [key: string]: any; // TODO
+  // [key: string]: any; // TODO
   availableCount: number;
-  startTime: IntTime; 
+  startTime: IntTime;
   endTime: IntTime;
   readableStartTime: string;
   readableEndTime: string;
-  bases: { [clubSparkId: string] : SimpleSession[] }
+  bases: { [clubSparkId: string]: SimpleSession[] }
 }
 
 export interface SimpleSession extends Session {

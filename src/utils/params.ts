@@ -1,4 +1,4 @@
-export const decodeParams = (searchString: string | null, defaultValue = {}): any => {
+export const decodeParams = (searchString: string | null, defaultValue = {}): { [key: string]: string } => {
   if (!searchString || searchString === "") {
     return defaultValue;
   }

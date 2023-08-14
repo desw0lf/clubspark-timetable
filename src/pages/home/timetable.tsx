@@ -35,7 +35,7 @@ export function TimeTable() {
   }, [idList, sessions]);
   const getUrl = (id: string, date: string) => `${import.meta.env.VITE_BASE_EXTERNAL_URL}/${id}/Booking/BookByDate#?date=${date}&role=guest`;
   const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
-  console.log({list});
+  console.log({ list });
   if (isAnyError) {
     return <>Errored</>;
   }
@@ -66,34 +66,34 @@ export function TimeTable() {
           return <hr key={item.startTime} className="opacity-25" />;
         }
         return <div key={item.startTime} className={classNames("grid gap-2", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
-        <div className={classNames("border bg-card text-card-foreground shadow", { [`col-span-${colspan}`]: true })}>
-          <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-            <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
-              <ClockIcon />
-              <span className={classNames({ "text-lime-600": item.available })}>{item.readableStartTime} - {item.readableEndTime}</span>
-            </h3>
-            {/* <EyeOpenIcon className="text-muted-foreground" /> */}
+          <div className={classNames("border bg-card text-card-foreground shadow", { [`col-span-${colspan}`]: true })}>
+            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+              <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
+                <ClockIcon />
+                <span className={classNames({ "text-lime-600": item.available })}>{item.readableStartTime} - {item.readableEndTime}</span>
+              </h3>
+              {/* <EyeOpenIcon className="text-muted-foreground" /> */}
+            </div>
+            <div className="p-6 pt-0">
+              {/* <div className="text-2xl font-bold">big_title</div> */}
+              <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
+            </div>
           </div>
-          <div className="p-6 pt-0">
-            {/* <div className="text-2xl font-bold">big_title</div> */}
-            <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
-          </div>
-        </div>
-        {Object.entries(item.bases).map(([_id, arr], i) => {
-          return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow col-span-1 px-2">
-            {arr.map((b, j) => {
-              if (!b) {
-                return null;
-              }
-              const isAvailable = typeof b.Cost === "number";
-              return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
-                <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
-                <p className="text-xs text-muted-foreground">{b.Name}</p>
-              </div>;
-            })}
+          {Object.entries(item.bases).map(([_id, arr], i) => {
+            return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow col-span-1 px-2">
+              {arr.map((b, j) => {
+                if (!b) {
+                  return null;
+                }
+                const isAvailable = typeof b.Cost === "number";
+                return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
+                  <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
+                  <p className="text-xs text-muted-foreground">{b.Name}</p>
+                </div>;
+              })}
             </div>;
-        })}
-      </div>;
+          })}
+        </div>;
       })}
     </>
   )

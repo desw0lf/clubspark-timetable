@@ -5,7 +5,7 @@ export function useSearchParams(defaultValue = {}) {
   const [searchParams, setSearchParams] = useState(decodeParams(window.location.search, defaultValue));
   const handlePopStateChange = useCallback((_event) => {
     setSearchParams(decodeParams(window.location.search, defaultValue));
-  }, []);
+  }, [defaultValue]);
 
   useEffect(() => {
     window.addEventListener("popstate", handlePopStateChange);
@@ -13,6 +13,6 @@ export function useSearchParams(defaultValue = {}) {
       window.removeEventListener("popstate", handlePopStateChange);
     };
   }, [handlePopStateChange]);
-  
+
   return searchParams;
 }
