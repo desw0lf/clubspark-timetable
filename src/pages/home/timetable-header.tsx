@@ -19,7 +19,7 @@ export const TimetableHeader: React.FC<TimetableHeaderProps> = ({ onlyAvailables
     <div className="flex items-center space-x-8">
       <div className="inline-flex items-center justify-center space-x-2">
         <Switch checked={onlyAvailables} onCheckedChange={onToggleAvailables} id="onlyAvailables" />
-        <Label htmlFor="onlyAvailables">Available Only</Label>
+        <Label htmlFor="onlyAvailables">Bookable only</Label>
       </div>
       <div>
         <MiniCalendar date={date} settings={settings} />
