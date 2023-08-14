@@ -70,7 +70,7 @@ export function TimeTable() {
             <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
               <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
                 <ClockIcon />
-                <span className={classNames({ "text-lime-600": item.available })}>{item.readableStartTime} - {item.readableEndTime}</span>
+                <span>{item.readableStartTime} - {item.readableEndTime}</span>
               </h3>
               {/* <EyeOpenIcon className="text-muted-foreground" /> */}
             </div>

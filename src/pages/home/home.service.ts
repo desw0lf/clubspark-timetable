@@ -16,7 +16,7 @@ const getSettings = async ({ id }: { id: string; }) => {
   const search = {
     _: Date.now()
   };
-  return await api.query(search).get(`/v0/VenueBooking/${id}/GetSettings`) as any;
+  return await api.query(search).get(`/v0/VenueBooking/${id}/GetSettings`) as unknown;
 }
 
 export default { getVenueSessions, getSettings };
