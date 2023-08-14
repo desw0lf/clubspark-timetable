@@ -4,7 +4,7 @@ import { generateDates } from "@/utils/generate-dates";
 import history from "../../history";
 import { useIdList } from "@/providers/id-list-provider";
 import { Pointer } from "@/components/pointer";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { UseQueryResult } from "react-query/types/react/types";
