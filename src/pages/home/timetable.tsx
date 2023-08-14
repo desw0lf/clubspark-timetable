@@ -5,15 +5,13 @@ import { cn as classNames } from "@/lib/utils";
 import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
-import { ClockIcon, ExternalLinkIcon } from "@radix-ui/react-icons";
+import { ClockIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
 import { useIdList } from "@/providers/id-list-provider";
-import { Pointer } from "@/components/pointer";
+import { TimetableTh } from "./timetable-th";
 // ? TYPES:
 import { Settings } from "@/types/settings";
-
-const MAX_COLSPAN = 7; // remember to add to tailwind.config.js > safelist (if changed)
 
 export function TimeTable() {
   const { idList } = useIdList();
@@ -45,69 +43,61 @@ export function TimeTable() {
     }
     return [];
   }, [idList, sessions]);
-  const getUrl = (id: string, date: string) => `${import.meta.env.VITE_BASE_EXTERNAL_URL}/${id}/Booking/BookByDate#?date=${date}&role=guest`;
   const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
   console.log({ list });
   if (isAnyError) {
-    return <>Errored</>;
+    return <div>Errored</div>;
   }
   if (isAnyLoading) {
     return <>
       <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
-      <span>Loading...</span>
+      <div className="flex flex-col gap-2">
+        <TimetableTh date={date} />
+        <div>Loading...</div>
+      </div>
     </>;
   }
-  const colspan = MAX_COLSPAN - idList.length;
   return (
     <>
       <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
-      <div className={classNames("grid gap-2 sticky top-14 bg-background/95 py-4", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
-        <div className={classNames({ [`col-span-${colspan}`]: true })}></div>
-        {idList.map(({ id, friendlyName }, i) => {
-          return <div key={id} className="col-span-1">
-            <a href={getUrl(id, date)} target="_blank" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
-              <Pointer pointer={{ friendlyName: "", index: i }} />
-              <span>{friendlyName || id}</span>
-              <ExternalLinkIcon />
-            </a>
+      <div className="flex flex-col gap-2">
+        <TimetableTh date={date} />
+        {list.map((item) => {
+          const areAnyAvailable = item.availableCount > 0;
+          if (onlyAvailables && !areAnyAvailable) {
+            return <hr key={item.startTime} className="opacity-25" />;
+          }
+          return <div key={item.startTime} className="flex gap-2">
+            <div className="border bg-card text-card-foreground shadow grow">
+              <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
+                <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
+                  <ClockIcon />
+                  <span>{item.readableStartTime} - {item.readableEndTime}</span>
+                </h3>
+                {/* <EyeOpenIcon className="text-muted-foreground" /> */}
+              </div>
+              <div className="p-6 pt-0">
+                {/* <div className="text-2xl font-bold">big_title</div> */}
+                <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
+              </div>
+            </div>
+            {Object.entries(item.bases).map(([_id, arr], i) => {
+              return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 px-2">
+                {arr.map((b, j) => {
+                  if (!b) {
+                    return null;
+                  }
+                  const isAvailable = typeof b.Cost === "number";
+                  return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
+                    <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
+                    <p className="text-xs text-muted-foreground">{b.Name}</p>
+                  </div>;
+                })}
+              </div>;
+            })}
           </div>;
         })}
       </div>
-      {list.map((item) => {
-        const areAnyAvailable = item.availableCount > 0;
-        if (onlyAvailables && !areAnyAvailable) {
-          return <hr key={item.startTime} className="opacity-25" />;
-        }
-        return <div key={item.startTime} className={classNames("grid gap-2", { [`grid-cols-${MAX_COLSPAN}`]: true })}>
-          <div className={classNames("border bg-card text-card-foreground shadow", { [`col-span-${colspan}`]: true })}>
-            <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-              <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
-                <ClockIcon />
-                <span>{item.readableStartTime} - {item.readableEndTime}</span>
-              </h3>
-              {/* <EyeOpenIcon className="text-muted-foreground" /> */}
-            </div>
-            <div className="p-6 pt-0">
-              {/* <div className="text-2xl font-bold">big_title</div> */}
-              <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
-            </div>
-          </div>
-          {Object.entries(item.bases).map(([_id, arr], i) => {
-            return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow col-span-1 px-2">
-              {arr.map((b, j) => {
-                if (!b) {
-                  return null;
-                }
-                const isAvailable = typeof b.Cost === "number";
-                return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
-                  <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
-                  <p className="text-xs text-muted-foreground">{b.Name}</p>
-                </div>;
-              })}
-            </div>;
-          })}
-        </div>;
-      })}
     </>
   )
 }

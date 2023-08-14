@@ -38,12 +38,12 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({ date, settings }) =>
     <div className="rdp" style={{ marginTop: "-1.3rem" }}>
       <table className="w-full border-collapse space-y-1" role="grid" aria-labelledby="day-picker">
         <thead className="rdp-head">
-          <tr className="flex">
+          <tr className="flex flex-wrap">
             {dates.map(([day, d]) => <th key={d} scope="col" className="text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]" aria-label={day}>{day.slice(0, 2)}</th>)}
           </tr>
         </thead>
         <tbody className="rdp-tbody" role="rowgroup">
-          <tr className="flex w-full mt-2">
+          <tr className="flex flex-wrap w-full mt-2">
             {dates.map(([_day, d], i) => {
               const isActive = date === d;
               const pointer = pointers[i];
