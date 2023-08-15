@@ -11,7 +11,8 @@ export interface ExtendedSession {
 }
 
 export interface SimpleSession extends Session {
-  resourceMeta: Pick<Resource, "ID" | "Name">;
+  resourceMeta: Pick<Resource, "ID" | "Name"> & { venueIndex: number; };
+  intervals: IntTime[];
 }
 
 interface Session {

@@ -1,7 +1,9 @@
 import { intTimeToStr } from "../../../utils/int-time-to-str";
+import { DEFAULT_INTERVAL } from "@/config";
 // ? TYPES:
 import { IntTime } from "../../../types/global";
 import { ExtendedSession, VenueSession, SimpleSession } from "../../../types/venue-session";
+import { ClubSparkId } from "../consts";
 
 interface TimeFrame {
   EarliestStartTime: IntTime;
@@ -9,17 +11,24 @@ interface TimeFrame {
   [otherKeys: string]: unknown;
 }
 
+
 const DEFAULT_TIME_FRAME: TimeFrame = {
   EarliestStartTime: 420, // from 7
   LatestEndTime: 1320 // till 22
 };
 
 const generateSession = (startHour: number, simpleSessions: { [id: string]: SimpleSession[][] }): ExtendedSession => {
-  const startTime = startHour * 60 as IntTime;
-  const endTime = startTime + 60 as IntTime;
+  const startTime = startHour * DEFAULT_INTERVAL as IntTime;
+  const endTime = startTime + DEFAULT_INTERVAL as IntTime;
   const bases: ExtendedSession["bases"] = Object.entries(simpleSessions).reduce((acc, [id, v]) => {
     const foundAll = v.map((sessions) => {
-      return sessions.find((s) => startTime >= s.StartTime && endTime <= s.EndTime);
+      const found = sessions.find((s) => startTime >= s.StartTime && endTime <= s.EndTime);
+      if (found) {
+        const intervalSlots = (found.EndTime - startTime) / DEFAULT_INTERVAL;
+        const intervals = Array.from({ length: intervalSlots }, (_, i) => (i + 1) * DEFAULT_INTERVAL);
+        return { ...found, intervals };
+      }
+      return undefined;
     });
     return {
       ...acc,
@@ -27,7 +36,6 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
     }
   }, {});
   return {
-    // todo
     availableCount: Object.values(bases).flat(1).reduce((acc, b) => typeof b.Cost === "number" ? acc + 1 : acc, 0),
     startTime,
     endTime,
@@ -38,7 +46,7 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
 }
 
 const generateList = (timeframe: TimeFrame) => {
-  return [...Array(24).keys()].filter((t) => timeframe.EarliestStartTime <= t * 60 && timeframe.LatestEndTime >= t * 60 + 60);
+  return [...Array(24).keys()].filter((t) => timeframe.EarliestStartTime <= t * DEFAULT_INTERVAL && timeframe.LatestEndTime >= t * DEFAULT_INTERVAL + DEFAULT_INTERVAL);
 }
 
 // const DEFAULT_LIST = generateList(DEFAULT_TIME_FRAME);
@@ -64,7 +72,7 @@ const generateList = (timeframe: TimeFrame) => {
 // ];
 
 
-export const generateData = (venues: { [id: string]: VenueSession }): ExtendedSession[] => {
+export const generateData = (venues: { [id: string]: VenueSession }, idList: ClubSparkId[]): ExtendedSession[] => {
   const timeframe = Object.values(venues).reduce((acc, { EarliestStartTime, LatestEndTime }) => {
     return {
       ...acc,
@@ -73,11 +81,12 @@ export const generateData = (venues: { [id: string]: VenueSession }): ExtendedSe
     }
   }, DEFAULT_TIME_FRAME);
   const simpleSessions: { [id: string]: SimpleSession[][] } = Object.entries(venues).reduce((acc, [id, v]) => {
+    const venueIndex = idList.findIndex((value) => value.id === id);
     const allSessions = v.Resources.map(({ ID, Name, Days }) => {
       return Days[0].Sessions.map((s) => {
         return {
           ...s,
-          resourceMeta: { ID, Name }
+          resourceMeta: { ID, Name, venueIndex }
         };
       });
     });

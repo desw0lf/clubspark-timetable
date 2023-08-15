@@ -10,8 +10,11 @@ import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
 import { useIdList } from "@/providers/id-list-provider";
 import { TimetableTh } from "./timetable-th";
+import { generateBookingUrl } from "@/ext-urls";
 // ? TYPES:
 import { Settings } from "@/types/settings";
+import { ExtendedSession } from "@/types/venue-session";
+import { IntTime } from "@/types/global";
 
 export function TimeTable() {
   const { idList } = useIdList();
@@ -27,7 +30,7 @@ export function TimeTable() {
     idList.map(({ id }) => ({
       queryKey: ["settings", id],
       queryFn: async () => homeService.getSettings({ id }),
-      initialData: { Roles: [{ AdvancedBookingPeriod: -1 }] } as unknown as Settings
+      initialData: { Roles: [{ AdvancedBookingPeriod: -1, MaximumBookingIntervals: 2, VenueID: "#errored" }] } as unknown as Settings
     })),
   );
   const { isAnyError, isAnyLoading } = useMemo(() => ({
@@ -39,11 +42,27 @@ export function TimeTable() {
       return generateData(idList.reduce((acc, item, i) => ({
         ...acc,
         [item.id]: sessions[i].data
-      }), {}));
+      }), {}), idList);
     }
     return [];
   }, [idList, sessions]);
   const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
+  const getVenueId = (i: number) => settings[i].data!.VenueID;
+  const generateUrl = (id: string, date: string, extendedSession: ExtendedSession, sessionIndex: number, interval: IntTime) => {
+    const { Category, SubCategory, resourceMeta, ID } = extendedSession.bases[id][sessionIndex];
+    const VenueID = getVenueId(resourceMeta.venueIndex);
+    const params = {
+      Date: date,
+      ResourceID: resourceMeta.ID,
+      SessionID: ID,
+      Category,
+      SubCategory,
+      VenueID,
+      StartTime: extendedSession.startTime,
+      EndTime: extendedSession.startTime + interval,
+    };
+    return generateBookingUrl(id, params);
+  };
   console.log({ list });
   if (isAnyError) {
     return <div>Errored</div>;
@@ -81,16 +100,22 @@ export function TimeTable() {
                 <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
               </div>
             </div>
-            {Object.entries(item.bases).map(([_id, arr], i) => {
+            {Object.entries(item.bases).map(([id, arr], i) => {
               return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 px-2">
                 {arr.map((b, j) => {
                   if (!b) {
                     return null;
                   }
                   const isAvailable = typeof b.Cost === "number";
+                  const venueIndex = b.resourceMeta.venueIndex;
+                  const MaximumBookingIntervals = settings[venueIndex].data!.Roles[0].MaximumBookingIntervals;
                   return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
-                    <div className="tracking-tight text-sm font-medium">{b.resourceMeta.Name} {isAvailable && <span className="float-right">&pound;{b.Cost}</span>}</div>
-                    <p className="text-xs text-muted-foreground">{b.Name}</p>
+                    <p className="tracking-tight text-sm font-medium">
+                      <a className="flex justify-between hover:underline" href={generateUrl(id, date, item, j, 60)} rel="noopener noreferrer" target="_blank">
+                        <span>{b.resourceMeta.Name}</span> {isAvailable && <span>&pound;{b.Cost}</span>}
+                      </a>
+                    </p>
+                    <p className="text-xs text-muted-foreground">{b.Name} {b.intervals.slice(0, MaximumBookingIntervals).map((n) => n)}</p>
                   </div>;
                 })}
               </div>;

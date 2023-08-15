@@ -1,3 +1,29 @@
+export const generateParams = (
+  params: { [key: string]: string | number | null | boolean | undefined } | null,
+  trailingMark: boolean | string = true
+): string => {
+  if (params === null) {
+    return "";
+  }
+  const keys = Object.keys(params).filter((key: string) => params[key] !== undefined);
+  if (keys.length === 0) {
+    return "";
+  }
+  const mark = trailingMark === true ? "?" : trailingMark || "";
+  return (
+    mark +
+    keys
+      .map((key: string) => {
+        const value =
+          params[key] === undefined || params[key] === null
+            ? ""
+            : encodeURIComponent(params[key] as string | boolean | number);
+        return key + "=" + value;
+      })
+      .join("&")
+  );
+};
+
 export const decodeParams = (searchString: string | null, defaultValue = {}): { [key: string]: string } => {
   if (!searchString || searchString === "") {
     return defaultValue;

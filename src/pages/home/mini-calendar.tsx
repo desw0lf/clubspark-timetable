@@ -50,10 +50,10 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({ date, settings }) =>
               return <td key={d} className="text-center text-sm p-0 relative [&amp;:has([aria-selected])]:bg-accent first:[&amp;:has([aria-selected])]:rounded-l-md last:[&amp;:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20" role="presentation">
                 <Pointer className="absolute right-0.5 top-0.5" pointer={pointer} />
                 <Tooltip>
-                  <TooltipTrigger>
-                    <button onClick={changeDate(d)} aria-selected={isActive || undefined} tabIndex={isActive ? 0 : -1} className={classNames("rdp-button_reset rdp-button inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9 p-0 font-normal aria-selected:opacity-100", { "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground": isActive })} name="day" role="gridcell" type="button">
-                      {d.slice(-2)}
-                    </button>
+                  <TooltipTrigger onClick={changeDate(d)} aria-selected={isActive || undefined} tabIndex={isActive ? 0 : -1} className={classNames("rdp-button_reset rdp-button inline-flex items-center justify-center rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9 p-0 font-normal aria-selected:opacity-100", { "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground": isActive })} name="day" role="gridcell" type="button">
+                    {/* <button> */}
+                    {d.slice(-2)}
+                    {/* </button> */}
                   </TooltipTrigger>
                   {pointer && <TooltipContent>
                     <p><b>{pointer.friendlyName}</b> allows court bookings up to <b>{i + 1}</b> days in advance</p>

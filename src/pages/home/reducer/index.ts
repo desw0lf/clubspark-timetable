@@ -4,7 +4,7 @@
 // ? TYPES:
 // import { ClubSparkId } from "../consts";
 // import { DateString } from "../../../types/global";
-import { ExtendedSession } from "../../../types/venue-session";
+// import { ExtendedSession } from "../../../types/venue-session";
 
 export interface State {
   // searchParams: {
@@ -12,7 +12,7 @@ export interface State {
   //   endDate: DateString;
   // }
   // idList: ClubSparkId[];
-  data: ExtendedSession[];
+  // data: ExtendedSession[];
   onlyAvailables: boolean;
 }
 
@@ -22,7 +22,7 @@ export const initialState: State = {
   //   endDate: nowDateString(),
   // },
   // idList: DEFAULT_CLUBSPARK_ID_LIST,
-  data: [],
+  // data: [],
   onlyAvailables: true
 };
 
