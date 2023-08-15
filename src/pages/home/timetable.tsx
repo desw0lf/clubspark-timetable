@@ -5,6 +5,7 @@ import { cn as classNames } from "@/lib/utils";
 import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
+import { EmptyList } from "./empty-list";
 import { ClockIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
@@ -74,7 +75,7 @@ export function TimeTable() {
       <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className="flex flex-col gap-2">
         <TimetableTh date={date} />
-        <div>Loading...</div>
+        <EmptyList onlyAvailables={onlyAvailables} />
       </div>
     </>;
   }
