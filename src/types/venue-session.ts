@@ -10,9 +10,16 @@ export interface ExtendedSession {
   bases: { [clubSparkId: string]: SimpleSession[] }
 }
 
+export interface Interval {
+  interval: IntTime;
+  readableStartTime: string;
+  readableEndTime: string;
+}
+
 export interface SimpleSession extends Session {
   resourceMeta: Pick<Resource, "ID" | "Name"> & { venueIndex: number; };
-  intervals: IntTime[];
+  intervals: Interval[];
+  readableCost?: string;
 }
 
 interface Session {

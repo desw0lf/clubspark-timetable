@@ -5,12 +5,14 @@ import { cn as classNames } from "@/lib/utils";
 import homeService from "./home.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
-import { ClockIcon } from "@radix-ui/react-icons";
+import { ClockIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
 import { useIdList } from "@/providers/id-list-provider";
 import { TimetableTh } from "./timetable-th";
 import { generateBookingUrl } from "@/ext-urls";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { BookButtons } from "./book-buttons";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { ExtendedSession } from "@/types/venue-session";
@@ -48,7 +50,7 @@ export function TimeTable() {
   }, [idList, sessions]);
   const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
   const getVenueId = (i: number) => settings[i].data!.VenueID;
-  const generateUrl = (id: string, date: string, extendedSession: ExtendedSession, sessionIndex: number, interval: IntTime) => {
+  const generateUrl = (id: string, date: string, extendedSession: ExtendedSession, sessionIndex: number) => (interval: IntTime) => {
     const { Category, SubCategory, resourceMeta, ID } = extendedSession.bases[id][sessionIndex];
     const VenueID = getVenueId(resourceMeta.venueIndex);
     const params = {
@@ -109,13 +111,22 @@ export function TimeTable() {
                   const isAvailable = typeof b.Cost === "number";
                   const venueIndex = b.resourceMeta.venueIndex;
                   const MaximumBookingIntervals = settings[venueIndex].data!.Roles[0].MaximumBookingIntervals;
-                  return <div key={j} className={classNames({ "text-lime-600": isAvailable, "text-muted-foreground": !isAvailable, "invisible": onlyAvailables && !isAvailable })}>
-                    <p className="tracking-tight text-sm font-medium">
-                      <a className="flex justify-between hover:underline" href={generateUrl(id, date, item, j, 60)} rel="noopener noreferrer" target="_blank">
-                        <span>{b.resourceMeta.Name}</span> {isAvailable && <span>&pound;{b.Cost}</span>}
-                      </a>
+                  return <div key={j} className={classNames("text-muted-foreground", { "invisible": onlyAvailables && !isAvailable })}>
+                    <p className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
+                      <span className="inline-flex items-center gap-1">
+                        <span className={classNames({ "text-lime-600": isAvailable })}>{b.resourceMeta.Name}</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <InfoCircledIcon />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{b.Name}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </span>
+                      {isAvailable && <BookButtons disabled={false} intervals={b.intervals.slice(0, MaximumBookingIntervals)} generateUrl={generateUrl(id, date, item, j)} />}
                     </p>
-                    <p className="text-xs text-muted-foreground">{b.Name} {b.intervals.slice(0, MaximumBookingIntervals).map((n) => n)}</p>
+                    <p className="text-xs text-muted-foreground">{isAvailable ? <span>{b.readableCost}</span> : <span className="opacity-25">-</span>}</p>
                   </div>;
                 })}
               </div>;

@@ -18,15 +18,28 @@ const DEFAULT_TIME_FRAME: TimeFrame = {
 };
 
 const generateSession = (startHour: number, simpleSessions: { [id: string]: SimpleSession[][] }): ExtendedSession => {
+  const GBP = new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP",
+  });
   const startTime = startHour * DEFAULT_INTERVAL as IntTime;
   const endTime = startTime + DEFAULT_INTERVAL as IntTime;
+  const readableStartTime = intTimeToStr(startTime);
   const bases: ExtendedSession["bases"] = Object.entries(simpleSessions).reduce((acc, [id, v]) => {
     const foundAll = v.map((sessions) => {
       const found = sessions.find((s) => startTime >= s.StartTime && endTime <= s.EndTime);
       if (found) {
         const intervalSlots = (found.EndTime - startTime) / DEFAULT_INTERVAL;
-        const intervals = Array.from({ length: intervalSlots }, (_, i) => (i + 1) * DEFAULT_INTERVAL);
-        return { ...found, intervals };
+        const intervals = Array.from({ length: intervalSlots }, (_, i) => {
+          const interval = (i + 1) * DEFAULT_INTERVAL;
+          return {
+            interval,
+            readableStartTime,
+            readableEndTime: intTimeToStr(startTime + interval)
+          };
+        });
+        const readableCost = found.Cost ? GBP.format(found.Cost) : undefined;
+        return { ...found, intervals, readableCost };
       }
       return undefined;
     });
@@ -39,7 +52,7 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
     availableCount: Object.values(bases).flat(1).reduce((acc, b) => typeof b.Cost === "number" ? acc + 1 : acc, 0),
     startTime,
     endTime,
-    readableStartTime: intTimeToStr(startTime),
+    readableStartTime,
     readableEndTime: intTimeToStr(endTime),
     bases: bases,
   };
