@@ -19,6 +19,8 @@ import { Settings } from "@/types/settings";
 import { ExtendedSession } from "@/types/venue-session";
 import { IntTime } from "@/types/global";
 
+const TodayLine: React.FC<{ top?: string }> = ({ top }) => <hr className={classNames("-mx-6 border-2 border-sky-600 opacity-30 pointer-events-none", { "absolute inset-x-0": top })} style={{ top }} />
+
 export function TimeTable() {
   const { idList } = useIdList();
   const { date } = useSearchParams({ date: generateDate(new Date()) });
@@ -87,9 +89,10 @@ export function TimeTable() {
         {list.map((item) => {
           const areAnyAvailable = item.availableCount > 0;
           if (onlyAvailables && !areAnyAvailable) {
-            return <hr key={item.startTime} className="opacity-25" />;
+            return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine /> : <hr key={item.startTime} className="opacity-25" />;
           }
-          return <div key={item.startTime} className="flex gap-2">
+          return <div key={item.startTime} className={classNames("flex gap-2 relative", { "opacity-20": item.isHistorical })}>
+            {item.percentageOfTimePassedInSlot >= 0 && <TodayLine top={`${item.percentageOfTimePassedInSlot}%`} />}
             <div className="border bg-card text-card-foreground shadow grow">
               <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
@@ -113,20 +116,20 @@ export function TimeTable() {
                   const venueIndex = b.resourceMeta.venueIndex;
                   const MaximumBookingIntervals = settings[venueIndex].data!.Roles[0].MaximumBookingIntervals;
                   return <div key={j} className={classNames("text-muted-foreground", { "invisible": onlyAvailables && !isAvailable })}>
-                    <p className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
+                    <div className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
                       <span className="inline-flex items-center gap-1">
                         <span className={classNames({ "text-lime-600": isAvailable })}>{b.resourceMeta.Name}</span>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <InfoCircledIcon />
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{b.Name}</p>
+                          <TooltipContent asChild>
+                            <span>{b.Name}</span>
                           </TooltipContent>
                         </Tooltip>
                       </span>
-                      {isAvailable && <BookButtons disabled={false} intervals={b.intervals.slice(0, MaximumBookingIntervals)} generateUrl={generateUrl(id, date, item, j)} />}
-                    </p>
+                      {isAvailable && <BookButtons disabled={item.isHistorical} intervals={b.intervals.slice(0, MaximumBookingIntervals)} generateUrl={generateUrl(id, date, item, j)} />}
+                    </div>
                     <p className="text-xs text-muted-foreground">{isAvailable ? <span>{b.readableCost}</span> : <span className="opacity-25">-</span>}</p>
                   </div>;
                 })}

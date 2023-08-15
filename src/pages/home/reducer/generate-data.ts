@@ -1,10 +1,11 @@
 import { intTimeToStr } from "../../../utils/int-time-to-str";
 import { DEFAULT_INTERVAL } from "@/config";
+import { generateDate } from "@/utils/generate-dates";
+
 // ? TYPES:
 import { IntTime } from "../../../types/global";
 import { ExtendedSession, VenueSession, SimpleSession } from "../../../types/venue-session";
 import { ClubSparkId } from "../consts";
-
 interface TimeFrame {
   EarliestStartTime: IntTime;
   LatestEndTime: IntTime;
@@ -17,7 +18,7 @@ const DEFAULT_TIME_FRAME: TimeFrame = {
   LatestEndTime: 1320 // till 22
 };
 
-const generateSession = (startHour: number, simpleSessions: { [id: string]: SimpleSession[][] }): ExtendedSession => {
+const generateSession = (startHour: number, simpleSessions: { [id: string]: SimpleSession[][] }, loadedDate: string): ExtendedSession => {
   const GBP = new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
@@ -48,12 +49,20 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
       [id]: foundAll,
     }
   }, {});
+  const now = new Date();
+  const dateToday = generateDate(now);
+  const isToday = dateToday === loadedDate;
+  const isHistorical = isToday && startHour <= now.getHours() - 1;
+  const isNowHour = startHour === now.getHours();
+  const percentageOfTimePassedInSlot = isToday && isNowHour ? Math.round(100 / 60 * now.getMinutes()) : -1;
   return {
     availableCount: Object.values(bases).flat(1).reduce((acc, b) => typeof b.Cost === "number" ? acc + 1 : acc, 0),
     startTime,
     endTime,
     readableStartTime,
     readableEndTime: intTimeToStr(endTime),
+    isHistorical,
+    percentageOfTimePassedInSlot,
     bases: bases,
   };
 }
@@ -93,10 +102,12 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
       LatestEndTime: LatestEndTime > acc.LatestEndTime ? LatestEndTime : acc.LatestEndTime
     }
   }, DEFAULT_TIME_FRAME);
-  const simpleSessions: { [id: string]: SimpleSession[][] } = Object.entries(venues).reduce((acc, [id, v]) => {
+  const venuesEntries = Object.entries(venues);
+  const simpleSessions: { [id: string]: SimpleSession[][] } = venuesEntries.reduce((acc, [id, v]) => {
     const venueIndex = idList.findIndex((value) => value.id === id);
     const allSessions = v.Resources.map(({ ID, Name, Days }) => {
-      return Days[0].Sessions.map((s) => {
+      const day = Days[0];
+      return day.Sessions.map((s) => {
         return {
           ...s,
           resourceMeta: { ID, Name, venueIndex }
@@ -108,7 +119,8 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
       [id]: allSessions
     };
   }, {});
+  const loadedDate = venuesEntries[0][1].Resources[0].Days[0].Date.split("T")[0];
   return generateList(timeframe).map((hour) => {
-    return generateSession(hour, simpleSessions);
+    return generateSession(hour, simpleSessions, loadedDate);
   });
 };

@@ -28,9 +28,9 @@ export const EmptyList: React.FC<{ onlyAvailables: boolean }> = ({ onlyAvailable
       {item.bases.map((a) => <div key={a.id} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 px-2">
         {a.courts.map((c, i) => {
           return <div key={i} className={classNames({ "invisible": !c })}>
-            <p className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
+            <div className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
               <Skeleton className="h-full w-[62px]" />
-            </p>
+            </div>
             <Skeleton className="h-4 w-[30px] mt-1" />
           </div>
         })}

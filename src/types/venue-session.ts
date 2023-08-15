@@ -7,7 +7,9 @@ export interface ExtendedSession {
   endTime: IntTime;
   readableStartTime: string;
   readableEndTime: string;
-  bases: { [clubSparkId: string]: SimpleSession[] }
+  bases: { [clubSparkId: string]: SimpleSession[] };
+  isHistorical: boolean;
+  percentageOfTimePassedInSlot: -1 | number;
 }
 
 export interface Interval {
@@ -17,7 +19,7 @@ export interface Interval {
 }
 
 export interface SimpleSession extends Session {
-  resourceMeta: Pick<Resource, "ID" | "Name"> & { venueIndex: number; };
+  resourceMeta: Pick<Resource, "ID" | "Name"> & { venueIndex: number; Date: string; };
   intervals: Interval[];
   readableCost?: string;
 }
