@@ -9,9 +9,9 @@ interface TimetableThProps {
 
 export const TimetableTh: React.FC<TimetableThProps> = ({ date }) => {
   const { idList } = useIdList();
-  return <div className="flex gap-2 sticky top-14 bg-background/95 py-4">
+  return <div className="flex gap-px sm:gap-2 sticky top-14 bg-background/95 py-1 sm:py-4">
     <div className="grow">
-      <div className="px-6">
+      <div className="sm:px-6 px-1">
         <div className="w-full" style={{ maxWidth: "96px", minWidth: "65px" }}></div>
       </div>
     </div>
@@ -19,7 +19,7 @@ export const TimetableTh: React.FC<TimetableThProps> = ({ date }) => {
       return <div key={id} className="basis-44">
         <a href={generateTimetableUrl(id, date)} target="_blank" rel="noopener noreferrer" className="font-medium text-muted-foreground inline-flex items-center gap-1 transition-colors  hover:text-foreground">
           <Pointer pointer={{ friendlyName: "", index: i }} />
-          <span>{friendlyName || id}</span>
+          <span className="text-xs sm:text-base">{friendlyName || id}</span>
           <ExternalLinkIcon />
         </a>
       </div>;

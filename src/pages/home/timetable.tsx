@@ -91,23 +91,23 @@ export function TimeTable() {
           if (onlyAvailables && !areAnyAvailable) {
             return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine /> : <hr key={item.startTime} className="opacity-25" />;
           }
-          return <div key={item.startTime} className={classNames("flex gap-2 relative", { "opacity-20": item.isHistorical })}>
+          return <div key={item.startTime} className={classNames("flex gap-px sm:gap-2 relative", { "opacity-20": item.isHistorical })}>
             {item.percentageOfTimePassedInSlot >= 0 && <TodayLine top={`${item.percentageOfTimePassedInSlot}%`} />}
             <div className="border bg-card text-card-foreground shadow grow">
-              <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1">
+              <div className="sm:p-6 px-1 flex flex-row items-center justify-between space-y-0 sm:pb-2">
+                <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-px sm:gap-1">
                   <ClockIcon />
-                  <span>{item.readableStartTime} - {item.readableEndTime}</span>
+                  <span><span className="block sm:inline">{item.readableStartTime}</span><span className="hidden sm:inline"> - </span><span className="block sm:inline">{item.readableEndTime}</span></span>
                 </h3>
                 {/* <EyeOpenIcon className="text-muted-foreground" /> */}
               </div>
-              <div className="p-6 pt-0">
+              <div className="sm:p-6 px-1 sm:pt-0 pt-0">
                 {/* <div className="text-2xl font-bold">big_title</div> */}
                 <p className="text-xs text-muted-foreground">{areAnyAvailable ? `${item.availableCount} court(s) available` : "Unavailable"}</p>
               </div>
             </div>
             {Object.entries(item.bases).map(([id, arr], i) => {
-              return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 px-2">
+              return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 py-px px-px sm:px-2">
                 {arr.map((b, j) => {
                   if (!b) {
                     return null;
@@ -116,8 +116,8 @@ export function TimeTable() {
                   const venueIndex = b.resourceMeta.venueIndex;
                   const MaximumBookingIntervals = settings[venueIndex].data!.Roles[0].MaximumBookingIntervals;
                   return <div key={j} className={classNames("text-muted-foreground", { "invisible": onlyAvailables && !isAvailable })}>
-                    <div className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
-                      <span className="inline-flex items-center gap-1">
+                    <div className="tracking-tight text-xs sm:text-sm font-medium flex justify-between items-start h-5">
+                      <span className="inline-flex items-center gap-px sm:gap-1">
                         <span className={classNames({ "text-lime-600": isAvailable })}>{b.resourceMeta.Name}</span>
                         <Tooltip>
                           <TooltipTrigger asChild>

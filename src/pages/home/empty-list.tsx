@@ -11,27 +11,27 @@ export const EmptyList: React.FC<{ onlyAvailables: boolean }> = ({ onlyAvailable
     bases: idList.map(({ id }) => ({ id, courts: [1, 2].map(() => !onlyAvailables ? true : Math.random() < 0.5) }))
   }))), [onlyAvailables, idList]);
   return list.map((item) => {
-    return <div key={item.id} className="flex gap-2">
+    return <div key={item.id} className="flex gap-px sm:gap-2">
       <div className="border bg-card text-card-foreground shadow grow">
-        <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-          <Skeleton className="h-5 w-[98px]" />
+        <div className="sm:p-6 px-1 flex flex-row items-center justify-between space-y-0 sm:pb-2">
+          <Skeleton className="h-10 sm:h-5 w-[48px] sm:w-[98px]" />
           {/* <h3 className="tracking-tight text-sm font-medium inline-flex items-center gap-1 text-muted-foreground">
             <ClockIcon />
             <span>{item.readableStartTime} - {item.readableEndTime}</span>
           </h3> */}
         </div>
-        <div className="p-6 pt-0">
-          <Skeleton className="h-4 w-[100px]" />
+        <div className="sm:p-6 px-1 sm:pt-0 pt-px">
+          <Skeleton className="h-4 sm:w-[100px]" />
           {/* <p className="text-xs text-muted-foreground">X court(s) available</p> */}
         </div>
       </div>
-      {item.bases.map((a) => <div key={a.id} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 px-2">
+      {item.bases.map((a) => <div key={a.id} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 py-px px-px sm:px-2">
         {a.courts.map((c, i) => {
           return <div key={i} className={classNames({ "invisible": !c })}>
-            <div className="tracking-tight text-sm font-medium flex justify-between items-start h-5">
-              <Skeleton className="h-full w-[62px]" />
+            <div className="tracking-tight text-xs sm:text-sm font-medium flex justify-between items-start h-5 mt-px sm:mt-0">
+              <Skeleton className="h-full w-[52px] sm:w-[62px]" />
             </div>
-            <Skeleton className="h-4 w-[30px] mt-1" />
+            <Skeleton className="h-4 w-[28px] sm:w-[30px] mt-1" />
           </div>
         })}
       </div>)}

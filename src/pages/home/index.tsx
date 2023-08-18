@@ -8,7 +8,7 @@ export function Home() {
       <Header />
       <div className="flex-1">
         <div className="container relative">
-          <section className="flex flex-col gap-2 px-4 pt-8 md:pt-12 page-header pb-8">
+          <section className="flex flex-col gap-2 px-0 sm:px-4 pt-8 md:pt-12 page-header pb-8">
             <TimeTable />
           </section>
         </div>

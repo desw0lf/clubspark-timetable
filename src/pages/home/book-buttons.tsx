@@ -9,7 +9,7 @@ import { IntTime } from "@/types/global";
 
 
 export const BookButtons: React.FC<{ intervals: Interval[], generateUrl: (interval: IntTime) => string, disabled: boolean }> = ({ intervals, generateUrl, disabled }) => {
-  const btnVariant = buttonVariants({ variant: "secondary", className: "h-full text-xs !px-2 font-normal" });
+  const btnVariant = buttonVariants({ variant: "secondary", className: "h-full text-xs !px-1 sm:!px-2 font-normal" });
   if (intervals.length === 1) {
     return <a aria-disabled={disabled} className={btnVariant} href={generateUrl(intervals[0].interval)} rel="noopener noreferrer" target="_blank">Book <OpenInNewWindowIcon className="ml-0.5" /></a>;
   }
