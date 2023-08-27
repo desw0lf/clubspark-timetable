@@ -56,7 +56,10 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
   const isNowHour = startHour === now.getHours();
   const percentageOfTimePassedInSlot = isToday && isNowHour ? Math.round(100 / 60 * now.getMinutes()) : -1;
   return {
-    availableCount: Object.values(bases).flat(1).reduce((acc, b) => typeof b.Cost === "number" ? acc + 1 : acc, 0),
+    availableCount: Object.values(bases).flat(1).reduce((acc, base) => {
+      const b = base || {};
+      return typeof b.Cost === "number" ? acc + 1 : acc;
+    }, 0),
     startTime,
     endTime,
     readableStartTime,
