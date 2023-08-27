@@ -1,8 +1,8 @@
 import { useReducer, useMemo } from "react";
 import { TimetableHeader } from "./timetable-header";
-import { useQueries } from "react-query"
+import { useQueries } from "react-query";
 import { cn as classNames } from "@/lib/utils";
-import homeService from "./home.service";
+import venueBookingService from "../../services/venue-booking.service";
 import { reducer, initialState } from "./reducer";
 import { generateData } from "./reducer/generate-data";
 import { EmptyList } from "./empty-list";
@@ -28,14 +28,15 @@ export function TimeTable() {
   const sessions = useQueries(
     idList.map(({ id }) => ({
       queryKey: ["sessions", id, date],
-      queryFn: async () => homeService.getVenueSessions({ id, startDate: date, endDate: date }),
+      queryFn: async () => venueBookingService.getVenueSessions({ id, startDate: date, endDate: date }),
     })),
   );
   const settings = useQueries(
     idList.map(({ id }) => ({
       queryKey: ["settings", id],
-      queryFn: async () => homeService.getSettings({ id }),
-      initialData: { Roles: [{ AdvancedBookingPeriod: -1, MaximumBookingIntervals: 2, VenueID: "#errored" }] } as unknown as Settings
+      queryFn: async () => venueBookingService.getSettings({ id }),
+      initialData: { Roles: [{ AdvancedBookingPeriod: -1, MaximumBookingIntervals: 2, VenueID: "#errored" }] } as unknown as Settings,
+      keepPreviousData: true
     })),
   );
   const { isAnyError, isAnyLoading } = useMemo(() => ({
@@ -68,7 +69,7 @@ export function TimeTable() {
     };
     return generateBookingUrl(id, params);
   };
-  console.log({ list });
+
   if (isAnyError) {
     return <div>Errored</div>;
   }

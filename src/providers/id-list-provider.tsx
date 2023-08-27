@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { loadStorage, saveStorage } from "@/utils/localstorage";
 import { DEFAULT_CLUBSPARK_ID_LIST } from "../pages/home/consts";
+import { generateUid } from "@/utils/uid";
 // ? TYPES:
 import { ClubSparkId } from "../pages/home/consts";
 
@@ -12,11 +13,15 @@ type IdListProviderProps = {
 
 type IdListProviderState = {
   idList: ClubSparkId[];
+  idListRaw: ClubSparkId[];
   setIdList: (idList: ClubSparkId[]) => void;
 }
 
+
+
 const initialState = {
   idList: DEFAULT_CLUBSPARK_ID_LIST,
+  idListRaw: DEFAULT_CLUBSPARK_ID_LIST,
   setIdList: () => null,
 };
 
@@ -28,13 +33,16 @@ export function IdListProvider({
   storageKey = "cst-id-list",
   ...props
 }: IdListProviderProps) {
-  const [idList, setIdList] = useState<ClubSparkId[]>(() => loadStorage<ClubSparkId[]>(storageKey, defaultList));
+  const [idList, setIdList] = useState<ClubSparkId[]>(() => loadStorage<ClubSparkId[]>(storageKey, defaultList).filter(({ disabled }) => !disabled));
+  const [idListRaw, setIdListRaw] = useState<ClubSparkId[]>(() => loadStorage<ClubSparkId[]>(storageKey, defaultList).map((a) => ({ ...a, uid: generateUid() })));
 
   const value = {
     idList,
+    idListRaw,
     setIdList: (idList: ClubSparkId[]) => {
       saveStorage(storageKey, idList);
-      setIdList(idList);
+      setIdList(idList.filter(({ disabled }) => !disabled));
+      setIdListRaw(idList);
     },
   }
 

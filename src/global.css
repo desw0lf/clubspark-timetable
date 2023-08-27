@@ -17,6 +17,11 @@ body {
   /* background: rgba(125,125,125,0.2); */
 }
 
+[data-gutter="stable"] {
+  scrollbar-gutter: stable;
+}
+
+
 ::-webkit-scrollbar {
   width: 14px;
   height: 18px;
@@ -31,4 +36,28 @@ body {
 
 ::-webkit-scrollbar-track {
   background-color: hsla(0, 0%, 13%, 0.300);
+}
+
+/* loader */
+.loader {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid hsl(var(--foreground) / 40%);
+  border-radius: 50%;
+  border-top-color: transparent;
+  transform: rotate(0);
+  animation: spin 0.8s linear infinite;
+  pointer-events: none;
+}
+
+.loader--sm {
+  width: 16px;
+  height: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(359deg);
+  }
 }

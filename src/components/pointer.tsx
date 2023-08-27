@@ -4,7 +4,7 @@ const colours = ["#C2095A", "#FEB95F", "#629677", "#FEEA00", "#D6FF79", "#5F00BA
 export const Pointer: React.FC<{
   className?: string;
   pointer: {
-    friendlyName: string;
+    friendlyName?: string;
     index: number;
   }
 }> = ({ pointer, className }) => {

@@ -1,8 +1,8 @@
-import api from "../../api";
+import api from "../api";
 // ? TYPES:
-import { VenueSession } from "../../types/venue-session";
-import { Settings } from "../../types/settings";
-import { DateString } from "../../types/global";
+import { VenueSession } from "../types/venue-session";
+import { Settings } from "../types/settings";
+import { DateString } from "../types/global";
 
 const getVenueSessions = async ({ id, startDate, endDate }: { id: string; startDate: DateString; endDate: DateString; }) => {
   const search = {
