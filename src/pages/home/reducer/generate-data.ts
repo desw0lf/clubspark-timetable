@@ -70,8 +70,8 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
   };
 }
 
-const generateList = (timeframe: TimeFrame) => {
-  return [...Array(24).keys()].filter((t) => timeframe.EarliestStartTime <= t * DEFAULT_INTERVAL && timeframe.LatestEndTime >= t * DEFAULT_INTERVAL + DEFAULT_INTERVAL);
+const generateList = (timeframe: TimeFrame, interval: number = DEFAULT_INTERVAL) => {
+  return [...Array(24).keys()].filter((t) => timeframe.EarliestStartTime <= t * interval && timeframe.LatestEndTime >= t * interval + interval);
 }
 
 // const DEFAULT_LIST = generateList(DEFAULT_TIME_FRAME);
@@ -96,15 +96,18 @@ const generateList = (timeframe: TimeFrame) => {
 //   },
 // ];
 
-
-export const generateData = (venues: { [id: string]: VenueSession }, idList: ClubSparkId[]): ExtendedSession[] => {
-  const timeframe = Object.values(venues).reduce((acc, { EarliestStartTime, LatestEndTime }) => {
+const generateTimeframe = (venues: { [id: string]: VenueSession }): TimeFrame => {
+  return Object.values(venues).reduce((acc, { EarliestStartTime, LatestEndTime }) => {
     return {
       ...acc,
       EarliestStartTime: EarliestStartTime < acc.EarliestStartTime ? EarliestStartTime : acc.EarliestStartTime,
       LatestEndTime: LatestEndTime > acc.LatestEndTime ? LatestEndTime : acc.LatestEndTime
     }
   }, DEFAULT_TIME_FRAME);
+}
+
+
+export const generateData = (venues: { [id: string]: VenueSession }, idList: ClubSparkId[]): ExtendedSession[] => {
   const venuesEntries = Object.entries(venues);
   const simpleSessions: { [id: string]: SimpleSession[][] } = venuesEntries.reduce((acc, [id, v]) => {
     const venueIndex = idList.findIndex((value) => value.id === id);
@@ -123,6 +126,7 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
     };
   }, {});
   const loadedDate = venuesEntries[0][1].Resources[0].Days[0].Date.split("T")[0];
+  const timeframe = generateTimeframe(venues);
   return generateList(timeframe).map((hour) => {
     return generateSession(hour, simpleSessions, loadedDate);
   });
