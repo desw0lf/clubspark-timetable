@@ -5,7 +5,7 @@ import { generateDate } from "@/utils/generate-dates";
 // ? TYPES:
 import { IntTime } from "../../../types/global";
 import { ExtendedSession, VenueSession, SimpleSession } from "../../../types/venue-session";
-import { ClubSparkId } from "../consts";
+import { ClubSparkId } from "../../../consts";
 interface TimeFrame {
   EarliestStartTime: IntTime;
   LatestEndTime: IntTime;

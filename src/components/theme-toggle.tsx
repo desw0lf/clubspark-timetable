@@ -1,4 +1,4 @@
-import { useTheme } from "./theme-provider";
+import { useTheme } from "../providers/theme-provider";
 import IconThemeLight from "../assets/icon-theme-light.svg";
 import IconThemeDark from "../assets/icon-theme-dark.svg";
 

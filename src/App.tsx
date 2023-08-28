@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ThemeProvider } from "./components/theme-provider";
+import { ThemeProvider } from "./providers/theme-provider";
 import { IdListProvider } from "./providers/id-list-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Home } from "./pages/home";

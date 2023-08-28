@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
 import { loadStorage, saveStorage } from "@/utils/localstorage";
-import { DEFAULT_CLUBSPARK_ID_LIST } from "../pages/home/consts";
+import { DEFAULT_CLUBSPARK_ID_LIST } from "../consts";
 import { generateUid } from "@/utils/uid";
 // ? TYPES:
-import { ClubSparkId } from "../pages/home/consts";
+import { ClubSparkId } from "../consts";
 
 type IdListProviderProps = {
   children: React.ReactNode;
