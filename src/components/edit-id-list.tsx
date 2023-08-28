@@ -165,11 +165,13 @@ export const EditIdList: React.FC<EditIdListProps> = ({ setSheetOpen }) => {
                 <Input disabled={item.disabled} className={classNames("pr-8", { "border-red-700": v.status === "error" })} onChange={onChange(i)} id={`id${i}`} name="id" type="text" value={item.id} autoComplete="off" />
                 {(() => {
                   // if (!["error", "success"].includes(v.status)) {
-                  if (isLoading) {
-                    return <Loader className="absolute right-0 top-3 mr-3" />;
-                  }
-                  if (v.status === "success" && !item.disabled) {
-                    return <CheckCircledIcon className="absolute right-0 top-3 mr-3 text-green-500" />;
+                  if (item.id) {
+                    if (isLoading) {
+                      return <Loader className="absolute right-0 top-3 mr-3" />;
+                    }
+                    if (v.status === "success" && !item.disabled) {
+                      return <CheckCircledIcon className="absolute right-0 top-3 mr-3 text-green-500" />;
+                    }
                   }
                   return null;
                 })()}
