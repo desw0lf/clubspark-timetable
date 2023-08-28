@@ -39,7 +39,7 @@ const generateSession = (startHour: number, simpleSessions: { [id: string]: Simp
             readableEndTime: intTimeToStr(startTime + interval)
           };
         });
-        const readableCost = found.Cost ? GBP.format(found.Cost) : undefined;
+        const readableCost = typeof found.Cost === "number" ? GBP.format(found.Cost) : undefined;
         return { ...found, intervals, readableCost };
       }
       return undefined;
