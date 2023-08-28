@@ -145,7 +145,7 @@ export const EditIdList: React.FC<EditIdListProps> = ({ setSheetOpen }) => {
           return <div className={classNames("mt-4 flex gap-4 flex-col", { "opacity-30": item.disabled })} key={i}>
             <div className="grid gap-2">
               <div className="flex items-center justify-between space-x-2">
-                <Label htmlFor={`id${i}`}>Venue ID <span className="text-red-500 bold text-lg">*</span></Label>
+                <Label className="leading-snug" htmlFor={`id${i}`}>Venue ID <span className="text-red-500 bold inline-block scale-150">*</span></Label>
                 <DropdownMenu>
                   <DropdownMenuTrigger className=""><DotsVerticalIcon /></DropdownMenuTrigger>
                   <DropdownMenuContent>
@@ -176,7 +176,7 @@ export const EditIdList: React.FC<EditIdListProps> = ({ setSheetOpen }) => {
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor={`friendlyName${i}`}>Label</Label>
+              <Label className="leading-snug" htmlFor={`friendlyName${i}`}>Label</Label>
               <div className="relative">
                 <Input disabled={item.disabled} className="pl-8" onChange={onChange(i)} id={`friendlyName${i}`} name="friendlyName" type="text" placeholder={item.id} value={item.friendlyName} autoComplete="off" />
                 <Pointer pointer={{ index: i }} className="absolute left-0 top-1/2 -translate-y-1/2 ml-4 mt-px pointer-events-none" />
