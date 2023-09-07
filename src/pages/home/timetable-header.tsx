@@ -5,6 +5,7 @@ import { InfoCircledIcon } from "@radix-ui/react-icons";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipPortal } from "@/components/ui/tooltip";
+import { WEATHER_FORECAST_DAYS } from "@/config";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { UseQueryResult } from "react-query/types/react/types";
@@ -21,7 +22,7 @@ interface TimetableHeaderProps {
 
 const ForecastTooltip = forwardRef<HTMLSpanElement, { rainForecastDisabled: boolean }>(({ rainForecastDisabled }, ref) => {
   if (rainForecastDisabled) {
-    return <span ref={ref}>Rain forecast available only <strong>{import.meta.env.VITE_WEATHER_FORECAST_DAYS}</strong> days ahead</span>;
+    return <span ref={ref}>Rain forecast available only <strong>{WEATHER_FORECAST_DAYS}</strong> days ahead</span>;
   }
   return <span ref={ref}>Highlighted in the venues column when there's a chance of rain</span>;
 });
