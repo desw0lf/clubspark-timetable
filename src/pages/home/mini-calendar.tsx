@@ -35,7 +35,7 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({ date, settings }) =>
     }, {});
   }, [settings, idList]);
   return (
-    <div className="rdp" style={{ marginTop: "-1.3rem" }}>
+    <div className="rdp" style={{ marginBottom: "-8px" }}>
       <table className="w-full border-collapse space-y-1" role="grid" aria-labelledby="day-picker">
         <thead className="rdp-head">
           <tr className="flex flex-wrap">

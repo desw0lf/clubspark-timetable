@@ -1,3 +1,7 @@
+:root {
+  --water-color: 199.2deg 95.24% 58.82%;
+}
+
 body {
   overflow: auto;
   overflow-y: scroll;
@@ -59,5 +63,189 @@ body {
 @keyframes spin {
   to {
     transform: rotate(359deg);
+  }
+}
+
+/* RAIN */
+/* BASED ON: https://codepen.io/arickle/pen/XKjMZY */
+.rain {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  opacity: 0.7;
+  animation: showrain 2s ease-out 0s 1;
+}
+
+@keyframes showrain {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* .rain.back-row {
+  display: none;
+  z-index: 1;
+  bottom: 60px;
+  opacity: 0.5;
+} */
+
+.drop {
+  position: absolute;
+  bottom: 100%;
+  width: 15px;
+  /* height: 120px; */
+  height: 100%;
+  pointer-events: none;
+  animation: drop 0.5s linear infinite;
+}
+
+@keyframes drop {
+  0% {
+    transform: translateY(-50%);
+  }
+
+  75% {
+    transform: translateY(40%);
+  }
+
+  100% {
+    transform: translateY(40%);
+  }
+}
+
+.stem {
+  width: 1px;
+  height: 60%;
+  /* margin-left: 7px; */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), hsl(var(--water-color) / 30%));
+  animation: stem 0.5s linear infinite;
+}
+
+@keyframes stem {
+  0% {
+    opacity: 1;
+  }
+
+  65% {
+    opacity: 1;
+  }
+
+  75% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.splat {
+  width: 15px;
+  height: 10px;
+  border-top: 2px dotted rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  opacity: 1;
+  transform: scale(0);
+  margin-left: -7px;
+  animation: splat 0.5s linear infinite;
+}
+
+@keyframes splat {
+  0% {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  80% {
+    opacity: 1;
+    transform: scale(0);
+  }
+
+  90% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* WAVES */
+/* BASED ON: https://codepen.io/MikitaLisavets/pen/PZqPZE */
+.waves {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transition: 0.4s transform ease;
+  transform-origin: bottom center;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  animation: wave 1s linear infinite;
+}
+
+.wave--front {
+  z-index: 2;
+  color: #32BAFA;
+}
+
+.wave--back {
+  z-index: 1;
+  color: #2C7FBE;
+  animation-direction: reverse;
+}
+
+.water {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 80%;
+  background: currentColor;
+}
+
+.water svg {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  right: 0;
+  bottom: 99.9%;
+  fill: currentColor;
+}
+
+.water:first-of-type {
+  transform: translate(-100%, 0);
+}
+
+@keyframes wave {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(50%, 0.5em, 0);
+  }
+
+  100% {
+    transform: translate3d(100%, 0, 0);
   }
 }

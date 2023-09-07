@@ -14,6 +14,7 @@ export interface State {
   // idList: ClubSparkId[];
   // data: ExtendedSession[];
   onlyAvailables: boolean;
+  rainForecast: boolean;
 }
 
 export const initialState: State = {
@@ -23,7 +24,8 @@ export const initialState: State = {
   // },
   // idList: DEFAULT_CLUBSPARK_ID_LIST,
   // data: [],
-  onlyAvailables: true
+  onlyAvailables: true,
+  rainForecast: true
 };
 
 export function reducer(state: State, action: { type: string;[key: string]: unknown }): State {
@@ -32,6 +34,12 @@ export function reducer(state: State, action: { type: string;[key: string]: unkn
       return {
         ...state,
         onlyAvailables: !state.onlyAvailables
+      }
+    }
+    case "TOGGLE_RAIN_FORECAST": {
+      return {
+        ...state,
+        rainForecast: !state.rainForecast
       }
     }
     default: {

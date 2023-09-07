@@ -10,10 +10,13 @@ import { ClockIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "@/hooks/use-search-params";
 import { generateDate } from "@/utils/generate-dates";
 import { useIdList } from "@/providers/id-list-provider";
+import { useGetWeather } from "../../hooks/use-get-weather";
 import { TimetableTh } from "./timetable-th";
 import { generateBookingUrl } from "@/ext-urls";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { BookButtons } from "./book-buttons";
+import { WeatherInfo } from "@/components/weather-info";
+import { rainForecastMaxDates } from "./consts";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { ExtendedSession } from "@/types/venue-session";
@@ -24,7 +27,7 @@ const TodayLine: React.FC<{ top?: string }> = ({ top }) => <hr className={classN
 export function TimeTable() {
   const { idList } = useIdList();
   const { date } = useSearchParams({ date: generateDate(new Date()) });
-  const [{ onlyAvailables }, dispatch] = useReducer(reducer, initialState);
+  const [{ onlyAvailables, rainForecast }, dispatch] = useReducer(reducer, initialState);
   const sessions = useQueries(
     idList.map(({ id }) => ({
       queryKey: ["sessions", id, date],
@@ -52,7 +55,10 @@ export function TimeTable() {
     }
     return [];
   }, [idList, sessions]);
+  const rainForecastDisabled = !rainForecastMaxDates[date];
+  const intervals = useGetWeather(date, rainForecast && !rainForecastDisabled);
   const toggleAvailables = () => dispatch({ type: "TOGGLE_ONLY_AVAILABLES" });
+  const toggleRainForecast = () => dispatch({ type: "TOGGLE_RAIN_FORECAST" });
   const getVenueId = (i: number) => settings[i].data!.VenueID;
   const generateUrl = (id: string, date: string, extendedSession: ExtendedSession, sessionIndex: number) => (interval: IntTime) => {
     const { Category, SubCategory, resourceMeta, ID } = extendedSession.bases[id][sessionIndex];
@@ -75,7 +81,7 @@ export function TimeTable() {
   }
   if (isAnyLoading) {
     return <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
+      <TimetableHeader rainForecastDisabled={rainForecastDisabled} rainForecast={rainForecast} onToggleRainForecast={toggleRainForecast} onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className="flex flex-col gap-2">
         <TimetableTh date={date} />
         <EmptyList onlyAvailables={onlyAvailables} />
@@ -84,13 +90,13 @@ export function TimeTable() {
   }
   return (
     <>
-      <TimetableHeader onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
+      <TimetableHeader rainForecastDisabled={rainForecastDisabled} rainForecast={rainForecast} onToggleRainForecast={toggleRainForecast} onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className="flex flex-col gap-2">
         <TimetableTh date={date} />
         {list.map((item) => {
           const areAnyAvailable = item.availableCount > 0;
           if (onlyAvailables && !areAnyAvailable) {
-            return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine /> : <hr key={item.startTime} className="opacity-25" />;
+            return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine key={item.startTime} /> : <hr key={item.startTime} className="opacity-25" />;
           }
           return <div key={item.startTime} className={classNames("flex gap-px sm:gap-2 relative", { "opacity-20": item.isHistorical })}>
             {item.percentageOfTimePassedInSlot >= 0 && <TodayLine top={`${item.percentageOfTimePassedInSlot}%`} />}
@@ -108,7 +114,7 @@ export function TimeTable() {
               </div>
             </div>
             {Object.entries(item.bases).map(([id, arr], i) => {
-              return <div key={i} className="flex flex-col justify-evenly border bg-card text-card-foreground shadow basis-44 py-px px-px sm:px-2">
+              return <div key={i} className="relative overflow-hidden flex flex-col justify-evenly border text-card-foreground shadow basis-44 py-px px-px sm:px-2">
                 {arr.map((b, j) => {
                   if (!b) {
                     return null;
@@ -134,6 +140,7 @@ export function TimeTable() {
                     <p className="text-xs text-muted-foreground">{isAvailable ? <span>{b.readableCost}</span> : <span className="opacity-25">-</span>}</p>
                   </div>;
                 })}
+                {rainForecast && !rainForecastDisabled && <WeatherInfo info={intervals[i][item.readableStartTime]} />}
               </div>;
             })}
           </div>;

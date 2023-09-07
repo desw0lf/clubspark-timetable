@@ -1,4 +1,4 @@
-import api from "../api";
+import { baseApi as api } from "../api";
 // ? TYPES:
 import { VenueSession } from "../types/venue-session";
 import { Settings } from "../types/settings";
