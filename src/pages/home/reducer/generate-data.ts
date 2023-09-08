@@ -107,7 +107,7 @@ const generateTimeframe = (venues: { [id: string]: VenueSession }): TimeFrame =>
 }
 
 
-export const generateData = (venues: { [id: string]: VenueSession }, idList: ClubSparkId[]): ExtendedSession[] => {
+export const generateData = (venues: { [id: string]: VenueSession }, idList: ClubSparkId[]): { list: ExtendedSession[], totalAvailableCount: number } => {
   const venuesEntries = Object.entries(venues);
   const simpleSessions: { [id: string]: SimpleSession[][] } = venuesEntries.reduce((acc, [id, v]) => {
     const venueIndex = idList.findIndex((value) => value.id === id);
@@ -127,7 +127,13 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
   }, {});
   const loadedDate = venuesEntries[0][1].Resources[0].Days[0].Date.split("T")[0];
   const timeframe = generateTimeframe(venues);
-  return generateList(timeframe).map((hour) => {
-    return generateSession(hour, simpleSessions, loadedDate);
-  });
+  let totalAvailableCount = 0;
+  return {
+    list: generateList(timeframe).map((hour) => {
+      const session = generateSession(hour, simpleSessions, loadedDate);
+      totalAvailableCount += session.availableCount;
+      return session;
+    }),
+    totalAvailableCount
+  }
 };

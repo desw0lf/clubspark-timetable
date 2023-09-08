@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { BookButtons } from "./book-buttons";
 import { WeatherInfo } from "@/components/weather-info";
 import { rainForecastMaxDates } from "./consts";
+import { NoResources } from "./no-resources";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { ExtendedSession } from "@/types/venue-session";
@@ -46,14 +47,15 @@ export function TimeTable() {
     isAnyError: sessions.some((s) => s.isError),
     isAnyLoading: sessions.some((s) => s.isLoading)
   }), [sessions]);
-  const list = useMemo(() => {
+  const { list, totalAvailableCount } = useMemo(() => {
     if (sessions.every((s) => !!s.data)) {
-      return generateData(idList.reduce((acc, item, i) => ({
+      const data = generateData(idList.reduce((acc, item, i) => ({
         ...acc,
         [item.id]: sessions[i].data
       }), {}), idList);
+      return data;
     }
-    return [];
+    return { list: [], totalAvailableCount: 0 };
   }, [idList, sessions]);
   const rainForecastDisabled = !rainForecastMaxDates[date];
   const intervals = useGetWeather(date, rainForecast && !rainForecastDisabled);
@@ -75,7 +77,7 @@ export function TimeTable() {
     };
     return generateBookingUrl(id, params);
   };
-
+  const noResourcesAvailable = onlyAvailables && totalAvailableCount === 0;
   if (isAnyError) {
     return <div>Errored</div>;
   }
@@ -92,8 +94,8 @@ export function TimeTable() {
     <>
       <TimetableHeader rainForecastDisabled={rainForecastDisabled} rainForecast={rainForecast} onToggleRainForecast={toggleRainForecast} onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className="flex flex-col gap-2">
-        <TimetableTh date={date} />
-        {list.map((item) => {
+        {!noResourcesAvailable && <TimetableTh date={date} />}
+        {noResourcesAvailable ? <NoResources /> : list.map((item) => {
           const areAnyAvailable = item.availableCount > 0;
           if (onlyAvailables && !areAnyAvailable) {
             return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine key={item.startTime} /> : <hr key={item.startTime} className="opacity-25" />;
