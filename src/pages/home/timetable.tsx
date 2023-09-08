@@ -95,7 +95,7 @@ export function TimeTable() {
       <TimetableHeader rainForecastDisabled={rainForecastDisabled} rainForecast={rainForecast} onToggleRainForecast={toggleRainForecast} onlyAvailables={onlyAvailables} onToggleAvailables={toggleAvailables} date={date} settings={settings} />
       <div className="flex flex-col gap-2">
         {!noResourcesAvailable && <TimetableTh date={date} />}
-        {noResourcesAvailable ? <NoResources /> : list.map((item) => {
+        {noResourcesAvailable ? <NoResources date={date} /> : list.map((item) => {
           const areAnyAvailable = item.availableCount > 0;
           if (onlyAvailables && !areAnyAvailable) {
             return item.percentageOfTimePassedInSlot >= 0 ? <TodayLine key={item.startTime} /> : <hr key={item.startTime} className="opacity-25" />;

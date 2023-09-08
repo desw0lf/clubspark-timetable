@@ -131,7 +131,9 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
   return {
     list: generateList(timeframe).map((hour) => {
       const session = generateSession(hour, simpleSessions, loadedDate);
-      totalAvailableCount += session.availableCount;
+      if (!session.isHistorical) {
+        totalAvailableCount += session.availableCount;
+      }
       return session;
     }),
     totalAvailableCount
