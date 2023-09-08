@@ -1,15 +1,13 @@
 import { useMemo } from "react";
 import { cn as classNames } from "@/lib/utils";
-import { generateDates } from "@/utils/generate-dates";
 import history from "../../history";
 import { useIdList } from "@/providers/id-list-provider";
 import { Pointer } from "@/components/pointer";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { availableDates } from "./consts";
 // ? TYPES:
 import { Settings } from "@/types/settings";
 import { UseQueryResult } from "react-query/types/react/types";
-
-const dates = generateDates(new Date(), 13);
 
 interface MiniCalendarProps {
   date: string;
@@ -39,12 +37,12 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({ date, settings }) =>
       <table className="w-full border-collapse space-y-1" role="grid" aria-labelledby="day-picker">
         <thead className="rdp-head">
           <tr className="flex flex-wrap">
-            {dates.map(([day, d]) => <th key={d} scope="col" className="text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]" aria-label={day}>{day.slice(0, 2)}</th>)}
+            {availableDates.map(([day, d]) => <th key={d} scope="col" className="text-muted-foreground rounded-md w-9 font-normal text-[0.8rem]" aria-label={day}>{day.slice(0, 2)}</th>)}
           </tr>
         </thead>
         <tbody className="rdp-tbody" role="rowgroup">
           <tr className="flex flex-wrap w-full mt-2">
-            {dates.map(([_day, d], i) => {
+            {availableDates.map(([_day, d], i) => {
               const isActive = date === d;
               const pointer = pointers[i];
               return <td key={d} className="text-center text-sm p-0 relative [&amp;:has([aria-selected])]:bg-accent first:[&amp;:has([aria-selected])]:rounded-l-md last:[&amp;:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20" role="presentation">
