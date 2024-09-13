@@ -125,7 +125,9 @@ export const generateData = (venues: { [id: string]: VenueSession }, idList: Clu
       [id]: allSessions
     };
   }, {});
-  const loadedDate = venuesEntries[0][1].Resources[0].Days[0].Date.split("T")[0];
+  const found = venuesEntries.find(([_name, entry]) => !!entry.Resources[0]);
+  const resource = found ? found[1].Resources[0] : { Days: [{ Date: "" }] };
+  const loadedDate = resource.Days[0].Date.split("T")[0];
   const timeframe = generateTimeframe(venues);
   let totalAvailableCount = 0;
   return {
